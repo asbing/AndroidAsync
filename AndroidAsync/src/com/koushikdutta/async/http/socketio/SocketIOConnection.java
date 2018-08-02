@@ -331,9 +331,16 @@ class SocketIOConnection {
         select(endpoint, new SelectCallback() {
             @Override
             public void onSelect(SocketIOClient client) {
-                ErrorCallback callback = client.errorCallback;
-                if (callback != null)
-                    callback.onError(error);
+                ErrorCallback errorCallback = client.errorCallback;
+                if (errorCallback != null)
+                    errorCallback.onError(error);
+                ConnectCallback connectCallback = client.connectCallback;
+                if (connectCallback != null) {
+                    String exceptionString = error.equals("0") ? "transport not supported" :
+                                             error.equals("1") ? "client not handshaken" :
+                                             error.equals("2") ? "unauthorized" : "unknown error";
+                    connectCallback.onConnectCompleted(new SocketIOException(exceptionString), client);
+                }
             }
         });
     }
