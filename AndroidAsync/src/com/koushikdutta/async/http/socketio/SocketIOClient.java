@@ -178,6 +178,12 @@ public class SocketIOClient extends EventEmitter {
         connection.connect(new SocketIOClient(connection, endpoint, connectCallback));
     }
 
+    public void of(String endpoint, ConnectCallback connectCallback, ErrorCallback errorCallback) {
+        SocketIOClient client = new SocketIOClient(connection, endpoint, connectCallback);
+        client.setErrorCallback(errorCallback);
+        connection.connect(client);
+    }
+
     public void reconnect() {
         connection.reconnect(null);
     }
